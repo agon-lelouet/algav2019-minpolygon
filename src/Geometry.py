@@ -11,11 +11,9 @@ class coordinates:
         return self.coordArray[1]
 
     def setX(self, xCoord):
-        print("xCoord", xCoord)
         self.coordArray[0] = xCoord
 
     def setY(self, yCoord):
-        print("yCoord", yCoord)
         self.coordArray[1] = yCoord
 
 class vector:
@@ -31,18 +29,30 @@ class vector:
         return np.sqrt(sum)
 
     def normalise(self):
+        """
+        sets the norm of this vector to one, done at object initialization, required for proper 
+        computing of angle between two vectors
+        """
         norm = self.getNorm()
         normedX = self.direction.getX() / norm
         normedY = self.direction.getY() / norm
-        self.direction[0] = normedX
-        self.direction[1] = normedY
+        self.direction.setX(normedX)
+        self.direction.setY(normedY)
         self.norm = self.getNorm()
 
     def rotateVector(self, theta: float):
+        """
+        rotates the vector of the specified angle (in radii, still)
+        """
+        coordMatrix = np.reshape(self.direction.coordArray, (2, 1))
         rotationmatrix = np.array([ [ np.cos(theta), -np.sin(theta) ], [ np.sin(theta), np.cos(theta) ] ], dtype=float)
-        self.direction = np.dot(rotationmatrix, self.direction.reshape((2, 1)))
+        self.direction.coordArray = np.dot(rotationmatrix, coordMatrix)
 
 def angleBetweenVectors(u: vector, v: vector) -> float:
-    scalarProduct = np.dot(u.direction, v.direction)
+    """
+    calculates (in radii) the angle between two vector objects
+    """
+    scalarProduct = np.dot(u.direction.coordArray, v.direction.coordArray)
+    print(scalarProduct)
     return np.arccos(scalarProduct)
 
