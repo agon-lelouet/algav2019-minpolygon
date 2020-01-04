@@ -3,7 +3,7 @@ import numpy as np
 class coordinates:
     def __init__(self, xCoord, yCoord):
         self.coordArray = np.array([xCoord, yCoord], dtype=float)
-    
+
     def getX(self) -> float:
         return self.coordArray[0]
 
@@ -18,23 +18,22 @@ class coordinates:
         print("yCoord", yCoord)
         self.coordArray[1] = yCoord
 
-
 class vector:
-    def __init__(self, orig: tuple, direct: tuple):
-        self.origin = np.array(orig, float)
-        self.direction = np.array(direct, float)
+    def __init__(self, orig: coordinates, direct: coordinates):
+        self.origin = orig
+        self.direction = direct
         self.normalise()
 
     def getNorm(self) -> float:
-        sqx = np.power(self.direction[0], 2)
-        sqy = np.power(self.direction[1], 2)
+        sqx = np.power(self.direction.getX(), 2)
+        sqy = np.power(self.direction.getY(), 2)
         sum = sqx + sqy
         return np.sqrt(sum)
 
     def normalise(self):
         norm = self.getNorm()
-        normedX = self.direction[0] / norm
-        normedY = self.direction[1] / norm
+        normedX = self.direction.getX() / norm
+        normedY = self.direction.getY() / norm
         self.direction[0] = normedX
         self.direction[1] = normedY
         self.norm = self.getNorm()

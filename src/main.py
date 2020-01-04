@@ -2,9 +2,9 @@ import Geometry as geo
 import math
 import numpy as np
 
-u = geo.vector((1, 1), (1, 0))
+u = geo.vector(geo.coordinates(1, 1), geo.coordinates(1, 0))
 
-v = geo.vector((1, 1), (0, 1)) 
+v = geo.vector(geo.coordinates(1, 1), geo.coordinates(0, 1)) 
 
 theta = geo.angleBetweenVectors(u, v)
 
