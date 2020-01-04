@@ -1,10 +1,12 @@
-#!/bin/bash
+#!/bin/sh
 
-if [ ! -f env/bin/activate ]
-then
-	sudo apt install python-virtualenv
-	virtualenv env --python=python3
+if [ ! "$(command -v virtualenv)" ]; then
+    sudo apt install python-virtualenv
 fi
 
-source env/bin/activate
+if [ ! -f "env/bin/activate" ]; then
+    virtualenv env --python=python3
+fi
+
+. env/bin/activate
 pip install -r requirements.txt
