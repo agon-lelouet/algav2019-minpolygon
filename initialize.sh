@@ -5,5 +5,6 @@ then
 	sudo apt install python-virtualenv
 	virtualenv env --python=python3
 fi
-    .env/bin/activate
+
+source env/bin/activate
 pip install -r requirements.txt

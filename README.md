@@ -7,9 +7,4 @@ Implementation of the AKL-Toussaint and Ritter algorithm (minimum polygons) for 
 For a first run on a Linux system : 
 - ensure you have python3 installed
 - run the initialize.sh file
-
-For further uses, juste run 
-
-`source env/activate`
-
-To activate the env and the python3 src/main.py
+- And then `python3 src/main.py` to run the project.
