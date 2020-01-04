@@ -12,4 +12,8 @@ For further uses, juste run
 
 `source env/activate`
 
-To activate the env and the python3 src/main.py
+To activate the env and then
+
+`python3 src/main.py`
+
+to run the project.
