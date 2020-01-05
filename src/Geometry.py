@@ -15,6 +15,12 @@ class coordinates:
 
     def setY(self, yCoord):
         self.coordArray[1] = yCoord
+    
+    def tofloatstring(self):
+        return "{0} {1} \n".format(self.getX(), self.getY())
+
+    def tointstring(self):
+        return "{0} {1} \n".format(int(self.getX()), int(self.getY()))
 
 class vector:
     def __init__(self, orig: coordinates, direct: coordinates):
@@ -53,6 +59,5 @@ def angleBetweenVectors(u: vector, v: vector) -> float:
     calculates (in radii) the angle between two vector objects
     """
     scalarProduct = np.dot(u.direction.coordArray, v.direction.coordArray)
-    print(scalarProduct)
     return np.arccos(scalarProduct)
 

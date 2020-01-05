@@ -131,6 +131,10 @@ void
 imprimerpile(struct pointc *tete)
 {
 	for (; tete != NULL; tete=tete->next) {
-		printf("%d %d\n", tete->x, tete->y);
+		if (!tete -> next) {
+			printf("%d %d", tete->x, tete->y);
+		} else {
+			printf("%d %d\n", tete->x, tete->y);
+		}
 	}
 }

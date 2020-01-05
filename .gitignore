@@ -2,3 +2,5 @@ env/
 samples/
 .vscode/
 __pycache__/
+executables/
+objects/
