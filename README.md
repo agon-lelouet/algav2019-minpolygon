@@ -49,3 +49,8 @@ You will need of course the following unix commands :
 
 All these commands are supposed to be installed on a POSIX system.
 
+# TODO
+
+- Add ritter to the pipeline (merge branch and call the c program from python)
+- Cleanup the code for toussaint
+- statistical analysis (should be easy to do, with datasets of varying sizes)
