@@ -4,7 +4,7 @@ import ssl
 import wget
 import csv
 import numpy as np
-from Geometry import coordinates
+from Geometry import point
 from random import randint
 
 #: Index of the last file after cleaning
@@ -28,6 +28,11 @@ def download() -> bool:
     _clean_files()
     return True
 
+def getrandomfile():
+        i = randint(0, NB_FILES)
+        return 'samples/test-%s.points' % (i)
+
+
 def _clean_files() -> None:
     """Well ok it's quite dirty, but the first file is corrupted
     and it is easier to start counting from 0.
@@ -44,30 +49,23 @@ class Dataset:
     def __init__(self):
         pointslist = []
 
-    def from_file(self):
+    def from_file(self, filename):
         """Given a filename, parses the file as a list of points
         Args:
             filename (str): The name of the file to parse
         Returns:
             (list): the constructed set of points 
         """
-        i = randint(0, NB_FILES)
-        filename = file = 'samples/test-%s.points' % (i)
         with open(filename, "r") as f:
             reader = csv.reader(f, delimiter=" ")
-            self.pointslist = [ coordinates(float(row[0]), float(row[1])) for row in reader ]
-    
-    def from_stdout(self, stdout):
-        decodedstdout = stdout.decode()
-        data = decodedstdout.split("\n")
-        self.pointslist = []
-        for row in data:
-            x, y = row.split()
-            self.pointslist.append(coordinates(float(x), float(y)))
+            self.pointslist = np.array([ point(float(row[0]), float(row[1])) for row in reader ])
 
-    def to_stdin(self, process):
+    def draw(self, ax, color, label):
+        ax.scatter(self.getXList(), self.getYList(), alpha=0.8, c=color, edgecolors='none', s=30, label=label)
+
+    def toString(self):
         for point in self.pointslist:
-            process.stdin.write(point.tointstring().encode())
+            print(point.tointstring())
 
     def getXList(self) -> np.array:
         """Gets all the x coordinates from the point set
@@ -76,7 +74,7 @@ class Dataset:
         Returns:
             (list): the list of x coordinates
         """
-        return np.array([ point.getX() for point in self.pointsList ])
+        return np.array([ point.getX() for point in self.pointslist ])
 
     def getYList(self) -> np.array:
         """Gets all the y coordinates from the point set
@@ -85,27 +83,27 @@ class Dataset:
         Returns:
             (list): the list of y coordinates
         """
-        return np.array([ point.getY() for point in self.pointsList ])
+        return np.array([ point.getY() for point in self.pointslist ])
 
 
-    def getMinPoint(self, xoryset: list) -> coordinates:
+    def getMinPoint(self, xoryset: list) -> point:
         """Gets the minimum point with the min x or y from the point data set
             use in conjuction with getXList or getYList
             Args:
             pointSet (list): The point set to parse
             xoryset (list): The list of x or y points to use as a reference
         Returns:
-            (coordinates): the min x or y point from this set 
+            (point): the min x or y point from this set 
         """
-        return self.pointsList[np.argmin(xoryset)]
+        return self.pointslist[np.argmin(xoryset)]
 
-    def getMaxPoint(self, xoryset: list) -> coordinates:
+    def getMaxPoint(self, xoryset: list) -> point:
         """Gets the max point with the min x or y from the point data set
             use in conjuction with getXList or getYList
             Args:
             pointSet (list): The point set to parse
             xoryset (list): The list of x or y points to use as a reference
         Returns:
-            (coordinates): the max x or y point from this set 
+            (point): the max x or y point from this set 
         """
-        return self.pointsList[np.argmax(xoryset)]
+        return self.pointslist[np.argmax(xoryset)]
