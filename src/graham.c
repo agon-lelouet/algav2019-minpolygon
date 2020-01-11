@@ -69,11 +69,11 @@ int main(int argc, char *argv[])
 		head = empiler(points + i, head);
 	}
 
-	clock_t end = clock();
-
-	double time = (double)(end - start) / CLOCKS_PER_SEC;
-
 	imprimerpile(head);
+
+	clock_t end = clock();
+	double time = (double)(end - start) / CLOCKS_PER_SEC;
+	printf("%f\n", time);
 
 	free(points);
 	return 0;
@@ -141,10 +141,6 @@ void
 imprimerpile(struct pointc *tete)
 {
 	for (; tete != NULL; tete=tete->next) {
-		if (!tete -> next) {
-			printf("%d %d", tete->x, tete->y);
-		} else {
-			printf("%d %d\n", tete->x, tete->y);
-		}
+		printf("%d %d\n", tete->x, tete->y);
 	}
 }

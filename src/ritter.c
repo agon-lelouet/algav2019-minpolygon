@@ -41,12 +41,11 @@ main(int argc, char *argv[])
 		ptnbr = circleremoval(&c, distcarree(&c,points), points, ptnbr);
 	}
 
-	clock_t end = clock();
-
-	double time = (double)(end - start) / CLOCKS_PER_SEC; 
-
-	printf("%f\n", time);
 	printf("%lf %lf %lf\n", c.x, c.y, hypot(c.x - p->x, c.y - p->y));
+
+	clock_t end = clock();
+	double time = (double)(end - start) / CLOCKS_PER_SEC;
+	printf("%f\n", time);
 
 	free(points);
 
