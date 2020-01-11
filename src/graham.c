@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 struct point {
 	int x;
@@ -34,6 +35,8 @@ int main(int argc, char *argv[])
 		scanf("%d %d", &((points+i)->x), &((points+i)->y));
 	}
 
+	clock_t start = clock();
+
 	pref = *points;
 
 	qsort(points+1, ptnbr-1, sizeof(struct point), comparaison);
@@ -62,6 +65,12 @@ int main(int argc, char *argv[])
 
 		head = empiler(points + i, head);
 	}
+
+	clock_t end = clock();
+
+	double time = (double)(end - start) / CLOCKS_PER_SEC;
+
+	printf("%f\n", time);
 
 	imprimerpile(head);
 

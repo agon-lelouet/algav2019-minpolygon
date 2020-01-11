@@ -1,10 +1,7 @@
 CC=gcc
-COMPILEFLAGS=-O0 -g3 -Wall -c
+COMPILEFLAGS=-O2 -Wall -lm
 
-all: executables/graham executables/tripixel
+all: executables/graham executables/tripixel executables/ritter
 
-executables/%: objects/%.o 
-	$(CC) $^ -o $@
-
-objects/%.o : src/%.c
-	$(CC) $(COMPILEFLAGS) -o $@ $<
+executables/%: src/%.c 
+	$(CC) $(COMPILEFLAGS) $< -o $@ 

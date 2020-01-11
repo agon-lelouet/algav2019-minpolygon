@@ -84,7 +84,24 @@ class Shape:
             originX = vector.origin.getX()
             originY = vector.origin.getY()
             ax.plot([ originX, originX + vector.direction.getX() ], [ originY, originY + vector.direction.getY() ], color=color)
-        
+
+class Circle:
+    def __init__(self, centerX: float, centerY: float, radius: float):
+        self.centerX = centerX
+        self.centerY = centerY
+        self.radius = radius      
+
+    def __init__(self, linearg: str):
+        x, y, radius = tuple(linearg.split(" "))
+        self.centerX = float(x)
+        self.centerY = float(y)
+        self.radius = float(radius)
+
+    
+    def area(self):
+        twopi = 2.0 * np.pi
+        rsquare = np.square(self.radius)
+        return twopi * rsquare
 
 def angleBetweenVectors(u: vector, v: vector) -> float:
     """
@@ -102,12 +119,12 @@ def get_intersect(a1, a2, b1, b2):
     b1: [x, y] a point on the second line
     b2: [x, y] another point on the second line
     """
-    s = np.vstack([a1,a2,b1,b2])        # s for stacked
-    h = np.hstack((s, np.ones((4, 1)))) # h for homogeneous
-    l1 = np.cross(h[0], h[1])           # get first line
-    l2 = np.cross(h[2], h[3])           # get second line
-    x, y, z = np.cross(l1, l2)          # point of intersection
-    if z == 0:                          # lines are parallel
+    s = np.vstack([a1,a2,b1,b2])
+    h = np.hstack((s, np.ones((4, 1))))
+    l1 = np.cross(h[0], h[1])
+    l2 = np.cross(h[2], h[3])
+    x, y, z = np.cross(l1, l2)
+    if z == 0:
         return (float('inf'), float('inf'))
     return (x/z, y/z)
 

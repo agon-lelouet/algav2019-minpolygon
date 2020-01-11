@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <time.h>
 
 struct point {
 	double x;
@@ -28,6 +29,8 @@ main(int argc, char *argv[])
 		scanf("%lf %lf", &((points+i)->x), &((points+i)->y));
 	}
 
+	clock_t start = clock();
+
 	struct point *p = furthest(points, points, ptnbr);
 	struct point *q = furthest(p, points, ptnbr);
 	struct point c = midpoint(p,q);
@@ -38,6 +41,11 @@ main(int argc, char *argv[])
 		ptnbr = circleremoval(&c, distcarree(&c,points), points, ptnbr);
 	}
 
+	clock_t end = clock();
+
+	double time = (double)(end - start) / CLOCKS_PER_SEC; 
+
+	printf("%f\n", time);
 	printf("%lf %lf %lf\n", c.x, c.y, hypot(c.x - p->x, c.y - p->y));
 
 	free(points);

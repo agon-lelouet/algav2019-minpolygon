@@ -4,8 +4,8 @@ import ssl
 import wget
 import csv
 import numpy as np
-from Geometry import point
 from random import randint
+from Geometry import point
 
 #: Index of the last file after cleaning
 NB_FILES = 1663
@@ -46,10 +46,10 @@ def _clean_files() -> None:
         pass
 
 class Dataset:
-    def __init__(self):
-        pointslist = []
+    def __init__(self, pointslist: list):
+        self.pointslist = pointslist
 
-    def from_file(self, filename):
+    def __init__(self, filename: str, from_line=1):
         """Given a filename, parses the file as a list of points
         Args:
             filename (str): The name of the file to parse
@@ -58,6 +58,8 @@ class Dataset:
         """
         with open(filename, "r") as f:
             reader = csv.reader(f, delimiter=" ")
+            for i in range(1, from_line):
+                next(f)
             self.pointslist = np.array([ point(float(row[0]), float(row[1])) for row in reader ])
 
     def draw(self, ax, color, label):

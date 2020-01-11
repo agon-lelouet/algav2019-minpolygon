@@ -1,37 +1,49 @@
 import Geometry as geo
 import numpy as np
+import linecache
 from Data import Dataset
 from subprocess import Popen, PIPE, STDOUT
 import os
+import time
 
-TRIPIXELDATA = "tripixeldata"
-GRAHAMDATA = "grahamdata"
+TRIPIXELDATA = "tempdata/tripixeldata"
+GRAHAMDATA = "tempdata/grahamdata"
+RITTERDATA = "tempdata/ritterdata"
 
 def TriPixelAlgorithm(filename: str):
     command = "cat {0} | sort -S 80% --parallel=8 -n -s -k1,1 | uniq | executables/tripixel | awk '{{print $2, $1}}' | sort -S 80% --parallel=8 -n -s -k1,1 | executables/tripixel | awk '{{print $2, $1}}' > {1}".format(filename, TRIPIXELDATA)
-    process = Popen(command, stdout=PIPE, stderr=STDOUT, shell=True)
+    process = Popen(command, shell=True)
     process.wait()
 
-    tripixeldataset = Dataset()
-    tripixeldataset.from_file(TRIPIXELDATA)
+    tripixeldataset = Dataset(TRIPIXELDATA)
     return tripixeldataset
 
 
 def GrahamAlgorithm() -> Dataset:
     command = "cat {0} | executables/graham $(wc -l {0} | awk '{{print $1}}') > {1}".format(TRIPIXELDATA, GRAHAMDATA)
-    process = Popen(command, stdout=PIPE, stderr=STDOUT, shell=True)
+    process = Popen(command, shell=True)
     process.wait()
 
-    grahamdataset = Dataset()
-    grahamdataset.from_file(GRAHAMDATA)
-    return grahamdataset
+    time = linecache.getline(GRAHAMDATA, 1)
 
+    grahamdataset = Dataset(GRAHAMDATA, from_line=2)
+    return (geo.Shape(grahamdataset.pointslist), time)
 
-def ToussaintAlgorithm(convexHull: geo.Shape) -> Dataset:
+def RitterAlgorithm() -> geo.Circle:
+    command = "cat {0} | executables/ritter $(wc -l {0} | awk '{{print $1}}') > {1}".format(TRIPIXELDATA, RITTERDATA)
+    process = Popen(command, shell=True)
+    process.wait()
 
-    # for vector in convexHull.vectors:
-    #     print(vector.origin.tofloatstring())
-    #     print(vector.origin.getX() + vector.direction.getX(), vector.origin.getY() + vector.direction.getY())
+    time = linecache.getline(RITTERDATA, 1)
+    circle = linecache.getline(RITTERDATA, 2)
+
+    rittercircle = geo.Circle(circle)
+    
+    return (rittercircle, time)
+
+def ToussaintAlgorithm(convexHull: geo.Shape) -> geo.Shape:
+
+    start = time.time()
 
     iindex = 0
     jindex = 0
@@ -109,6 +121,7 @@ def ToussaintAlgorithm(convexHull: geo.Shape) -> Dataset:
             iindex = (iindex+1)%convexhulllen
             support_i.origin = convexHull.points[iindex]
             iStepped = True
+
         elif indexanglemin == jindex:
             support_j = geo.vector(convexHull.vectors[jindex].origin, convexHull.vectors[jindex].direction)
             support_k = geo.vector(support_k.origin, support_j.normal().invert().direction)
@@ -118,6 +131,7 @@ def ToussaintAlgorithm(convexHull: geo.Shape) -> Dataset:
             jindex = (jindex+1)%convexhulllen
             support_j.origin = convexHull.points[jindex]
             jStepped = True
+
         elif indexanglemin == kindex:
             support_k = geo.vector(convexHull.vectors[kindex].origin, convexHull.vectors[kindex].direction)
             support_l = geo.vector(support_l.origin, support_k.normal().invert().direction)
@@ -126,6 +140,7 @@ def ToussaintAlgorithm(convexHull: geo.Shape) -> Dataset:
             kindex = (kindex+1)%convexhulllen
             support_k.origin = convexHull.points[kindex]
             kStepped = True
+
         else:
             support_l = geo.vector(convexHull.vectors[lindex].orig, convexHull.vectors[lindex].direction)
             support_i = geo.vector(support_i.origin, support_l.normal().invert().direction)
@@ -137,10 +152,10 @@ def ToussaintAlgorithm(convexHull: geo.Shape) -> Dataset:
             lStepped = True
 
         rectangle = geo.computeshapefromvectors([ support_i, support_j, support_k, support_l ])
+
         if rectangle.area() < areamin:
             minrectangle = geo.computeshapefromvectors([ support_i, support_j, support_k, support_l ])
             minarea = minrectangle.area()
-            print(minarea)
         
         if (iStepped and iindex == iindex0 or jStepped and jindex == jindex0 or
             kStepped and kindex == kindex0 or lStepped and lindex == lindex0):
@@ -148,4 +163,7 @@ def ToussaintAlgorithm(convexHull: geo.Shape) -> Dataset:
 
         hullscanned = (count >= 4)
 
-    return minrectangle
+    end = time.time()
+
+    total_time = end - start
+    return (minrectangle, total_time)
