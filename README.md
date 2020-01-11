@@ -36,7 +36,7 @@ The graham utility assumes that the entry with the lowest y coordinate (the left
 The following POSIX shell command should prepare everything correctly :
 
 ``` shell
-cat $input | sort -S 80% --parallel=8 -n | uniq | /path/to/tripixel | awk '{print $2, $1}' | sort -S 80% --parallel=8 -n | /path/to/tripixel | awk '{print $2, $1}' > cleandata
+cat $input | sort -S 80% --parallel=8 -n | uniq | /path/to/tripixel | head -n -1 | awk '{print $2, $1}' | sort -S 80% --parallel=8 -n | /path/to/tripixel | awk '{print $2, $1}' > cleandata
 ```
 
 The -S and --parallel options are not specified by POSIX, so may not be present on your version of sort. They do speed up the process considerably.

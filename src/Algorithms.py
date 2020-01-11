@@ -11,12 +11,12 @@ CONCATFILE = "tempdata/concatfile"
 TRIPIXELDATA = "tempdata/tripixeldata"
 GRAHAMDATA = "tempdata/grahamdata"
 RITTERDATA = "tempdata/ritterdata"
+TIMEDATA = "tempdata/timedata"
 
 def AggregateFiles(setsize: int):
     random_files = sample(ALL_FILES, setsize)
     seen = set()
     unique = not any(i in seen or seen.add(i) for i in random_files)
-    print(unique, len(random_files))
     command = "cat "
     for file in random_files:
         command+=file + " "
@@ -25,14 +25,22 @@ def AggregateFiles(setsize: int):
     process.wait()
 
 def TriPixelAlgorithm(filename):
-    command = "cat {0} | sort -S 80% --parallel=8 -n -s -k1,1 | uniq | executables/tripixel | awk '{{print $2, $1}}' | sort -S 80% --parallel=8 -n -s -k1,1 | executables/tripixel | awk '{{print $2, $1}}' > {1}".format(filename, TRIPIXELDATA)
-    process = Popen(command, shell=True)
-    process.wait()
-    time = float(linecache.getline(GRAHAMDATA, 1))
+    commands = [
+        "cat {0} | sort -S 80% --parallel=8 -n | uniq | executables/tripixel | tail -n -1 > {1}".format(CONCATFILE, TIMEDATA),
+        "cat {0} | sort -S 80% --parallel=8 -n | uniq | executables/tripixel | head -n -1 | awk '{{print $2, $1}}' | sort -S 80% --parallel=8 -n | executables/tripixel | tail -n -1 >> {1}".format(CONCATFILE, TIMEDATA),
+        "cat {0} | sort -S 80% --parallel=8 -n | uniq | executables/tripixel | head -n -1 | awk '{{print $2, $1}}' | sort -S 80% --parallel=8 -n | executables/tripixel | awk '{{print $2, $1}}' | head -n -1 > {1}".format(filename, TRIPIXELDATA)
+    ]
+    for command in commands:
+        process = Popen(command, shell=True)
+        (stdout, stderr) = process.communicate()
 
+    linecache.clearcache()
+    time1 = float(linecache.getline(TIMEDATA, 1))
+    time2 = float(linecache.getline(TIMEDATA, 2))
+    totaltime = time1 + time2
     tripixeldataset = Dataset(np.empty(1))
     tripixeldataset.from_file(TRIPIXELDATA, from_line=2)
-    return tripixeldataset
+    return ( tripixeldataset, totaltime)
 
 
 def GrahamAlgorithm() -> Dataset:
@@ -53,8 +61,8 @@ def RitterAlgorithm() -> geo.Circle:
     process.wait()
 
     linecache.clearcache()
-    time = float(linecache.getline(RITTERDATA, 1))
-    circle = linecache.getline(RITTERDATA, 2)
+    time = float(linecache.getline(RITTERDATA, 2))
+    circle = linecache.getline(RITTERDATA, 1)
 
     x, y, radius = tuple(circle.split(" "))
 

@@ -69,11 +69,11 @@ int main(int argc, char *argv[])
 		head = empiler(points + i, head);
 	}
 
+	printf("%f\n", time);
 	imprimerpile(head);
 
 	clock_t end = clock();
 	double time = (double)(end - start) / CLOCKS_PER_SEC;
-	printf("%f\n", time);
 
 	free(points);
 	return 0;

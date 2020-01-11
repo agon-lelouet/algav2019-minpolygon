@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <sys/types.h>
+
 
 struct bucket {
 	long int ref;
@@ -52,6 +54,7 @@ main(int argc, char *argv[])
 
 	clock_t end = clock();
 	double time = (double)(end - start) / CLOCKS_PER_SEC;
+
 	printf("%f\n", time);
 
 	return 0;
