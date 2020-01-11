@@ -1,7 +1,11 @@
 env/
-samples/
 .vscode/
 __pycache__/
-executables/
-objects/
-tempdata/
+executables/*
+objects/*
+samples/*
+tempdata/*
+
+!executables/.gitkeep
+!objects/.gitkeep
+!tempdata/.gitkeep
