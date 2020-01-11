@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 struct bucket {
 	long int ref;
@@ -23,6 +24,8 @@ main(int argc, char *argv[])
 		.cbv = 0,
 	};
 
+	clock_t start = clock();
+
 	while (scanf("%ld %ld", &curbucket, &curpos) != EOF) {
 
 		if ((curbucket != mybucket.ref) || (!mybucket.cbv)) {
@@ -45,6 +48,11 @@ main(int argc, char *argv[])
 		}
 	}
 
+	clock_t end = clock();
+
+	double time = (double)(end - start) / CLOCKS_PER_SEC; 
+
+	printf("%f\n", time);
 	printbucket(&mybucket);
 
 	return 0;

@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 struct point {
 	int x;
@@ -69,8 +72,6 @@ int main(int argc, char *argv[])
 	clock_t end = clock();
 
 	double time = (double)(end - start) / CLOCKS_PER_SEC;
-
-	printf("%f\n", time);
 
 	imprimerpile(head);
 

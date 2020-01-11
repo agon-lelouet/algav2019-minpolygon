@@ -8,21 +8,21 @@ from random import randint
 
 def runpipeline(index: int) -> tuple:
 
-    AggregateFiles(index+1)
+    AggregateFiles((index+1) * 100)
 
-    tripixelSet = TriPixelAlgorithm()
+    (tripixelSet, tripixel) = TriPixelAlgorithm(CONCATFILE)
     pointsnumber = len(tripixelSet.pointslist)
 
     (convexhull, hulltime) = GrahamAlgorithm()
 
-    (boundingcircle, circletime) = RitterAlgorithm()
-
     (minrectangle, rectangletime) = ToussaintAlgorithm(convexhull)
+
+    (boundingcircle, circletime) = RitterAlgorithm()
 
     return (pointsnumber, convexhull, hulltime, minrectangle, rectangletime, boundingcircle, circletime)
 
-def computequality(shape: Shape, hull: Shape):
-    return shape.area() / hull.area()
+def computequality(shape, hull: Shape):
+    return (shape.area() - hull.area()) / hull.area()
 
 def getrandomnumber(max: int):
     return randint(1, max)

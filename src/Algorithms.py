@@ -14,6 +14,9 @@ RITTERDATA = "tempdata/ritterdata"
 
 def AggregateFiles(setsize: int):
     random_files = sample(ALL_FILES, setsize)
+    seen = set()
+    unique = not any(i in seen or seen.add(i) for i in random_files)
+    print(unique, len(random_files))
     command = "cat "
     for file in random_files:
         command+=file + " "
@@ -25,9 +28,10 @@ def TriPixelAlgorithm(filename):
     command = "cat {0} | sort -S 80% --parallel=8 -n -s -k1,1 | uniq | executables/tripixel | awk '{{print $2, $1}}' | sort -S 80% --parallel=8 -n -s -k1,1 | executables/tripixel | awk '{{print $2, $1}}' > {1}".format(filename, TRIPIXELDATA)
     process = Popen(command, shell=True)
     process.wait()
+    time = float(linecache.getline(GRAHAMDATA, 1))
 
     tripixeldataset = Dataset(np.empty(1))
-    tripixeldataset.from_file(TRIPIXELDATA)
+    tripixeldataset.from_file(TRIPIXELDATA, from_line=2)
     return tripixeldataset
 
 
