@@ -46,10 +46,10 @@ def _clean_files() -> None:
         pass
 
 class Dataset:
-    def __init__(self, pointslist: list):
+    def __init__(self, pointslist: np.array):
         self.pointslist = pointslist
 
-    def __init__(self, filename: str, from_line=1):
+    def from_file(self, filename: str, from_line=1):
         """Given a filename, parses the file as a list of points
         Args:
             filename (str): The name of the file to parse
@@ -62,8 +62,15 @@ class Dataset:
                 next(f)
             self.pointslist = np.array([ point(float(row[0]), float(row[1])) for row in reader ])
 
-    def draw(self, ax, color, label):
-        ax.scatter(self.getXList(), self.getYList(), alpha=0.8, c=color, edgecolors='none', s=30, label=label)
+    def draw(self, plot, color, label, withlines=False):
+        plot.scatter(self.getXList(), self.getYList(), alpha=0.8, c=color, edgecolors='none', s=30, label=label)
+        if withlines:
+            plot.plot(self.getXList(), self.getYList(), color=color, ls="solid")
+            # maxlen = len(self.pointslist)
+            # for index, point in enumerate(self.pointslist):
+            #     plot.plot([point.getX(), self.pointslist[index+1].getX()], [ point.getY(), self.pointslist[index+1].getY() ], color=color, ls="solid")
+            #     if (index == maxlen-2):
+            #         break
 
     def toString(self):
         for point in self.pointslist:

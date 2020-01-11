@@ -1,21 +1,33 @@
 import Geometry as geo
 import numpy as np
 import linecache
-from Data import Dataset
-from subprocess import Popen, PIPE, STDOUT
+from Data import Dataset, NB_FILES, ALL_FILES
+from subprocess import Popen
+from random import sample
 import os
 import time
 
+CONCATFILE = "tempdata/concatfile"
 TRIPIXELDATA = "tempdata/tripixeldata"
 GRAHAMDATA = "tempdata/grahamdata"
 RITTERDATA = "tempdata/ritterdata"
 
-def TriPixelAlgorithm(filename: str):
+def AggregateFiles(setsize: int):
+    random_files = sample(ALL_FILES, setsize)
+    command = "cat "
+    for file in random_files:
+        command+=file + " "
+    command += " > " + CONCATFILE
+    process = Popen(command, shell=True)
+    process.wait()
+
+def TriPixelAlgorithm(filename):
     command = "cat {0} | sort -S 80% --parallel=8 -n -s -k1,1 | uniq | executables/tripixel | awk '{{print $2, $1}}' | sort -S 80% --parallel=8 -n -s -k1,1 | executables/tripixel | awk '{{print $2, $1}}' > {1}".format(filename, TRIPIXELDATA)
     process = Popen(command, shell=True)
     process.wait()
 
-    tripixeldataset = Dataset(TRIPIXELDATA)
+    tripixeldataset = Dataset(np.empty(1))
+    tripixeldataset.from_file(TRIPIXELDATA)
     return tripixeldataset
 
 
@@ -23,10 +35,12 @@ def GrahamAlgorithm() -> Dataset:
     command = "cat {0} | executables/graham $(wc -l {0} | awk '{{print $1}}') > {1}".format(TRIPIXELDATA, GRAHAMDATA)
     process = Popen(command, shell=True)
     process.wait()
+    linecache.clearcache()
+    time = float(linecache.getline(GRAHAMDATA, 1))
 
-    time = linecache.getline(GRAHAMDATA, 1)
+    grahamdataset = Dataset(np.empty(1))
+    grahamdataset.from_file(GRAHAMDATA, from_line=2)
 
-    grahamdataset = Dataset(GRAHAMDATA, from_line=2)
     return (geo.Shape(grahamdataset.pointslist), time)
 
 def RitterAlgorithm() -> geo.Circle:
@@ -34,16 +48,19 @@ def RitterAlgorithm() -> geo.Circle:
     process = Popen(command, shell=True)
     process.wait()
 
-    time = linecache.getline(RITTERDATA, 1)
+    linecache.clearcache()
+    time = float(linecache.getline(RITTERDATA, 1))
     circle = linecache.getline(RITTERDATA, 2)
 
-    rittercircle = geo.Circle(circle)
+    x, y, radius = tuple(circle.split(" "))
+
+    rittercircle = geo.Circle(float(x), float(y), float(radius))
     
     return (rittercircle, time)
 
 def ToussaintAlgorithm(convexHull: geo.Shape) -> geo.Shape:
 
-    start = time.time()
+    start = time.perf_counter_ns()
 
     iindex = 0
     jindex = 0
@@ -163,7 +180,7 @@ def ToussaintAlgorithm(convexHull: geo.Shape) -> geo.Shape:
 
         hullscanned = (count >= 4)
 
-    end = time.time()
+    end = time.perf_counter_ns()
 
-    total_time = end - start
+    total_time = (end - start) / (10 ** 9)
     return (minrectangle, total_time)

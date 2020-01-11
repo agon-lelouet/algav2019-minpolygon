@@ -6,9 +6,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 from random import randint
 
-def runpipeline(filename: str) -> tuple:
+def runpipeline(index: int) -> tuple:
 
-    tripixelSet = TriPixelAlgorithm(filename)
+    AggregateFiles(index+1)
+
+    tripixelSet = TriPixelAlgorithm()
+    pointsnumber = len(tripixelSet.pointslist)
 
     (convexhull, hulltime) = GrahamAlgorithm()
 
@@ -16,7 +19,7 @@ def runpipeline(filename: str) -> tuple:
 
     (minrectangle, rectangletime) = ToussaintAlgorithm(convexhull)
 
-    return (convexhull, hulltime, minrectangle, rectangletime, boundingcircle, circletime)
+    return (pointsnumber, convexhull, hulltime, minrectangle, rectangletime, boundingcircle, circletime)
 
 def computequality(shape: Shape, hull: Shape):
     return shape.area() / hull.area()
@@ -29,6 +32,13 @@ def main():
     print(nb_iter)
     download()
 
+    samplesdir = "samples/"
+    i = 0
+
+    fig = plt.figure()
+    efficacity = fig.add_subplot(2, 1, 1)
+    time = fig.add_subplot(2, 1, 2)
+
     toussaintresults = np.empty(nb_iter, dtype=object)
     ritterresults = np.empty(nb_iter, dtype=object) 
     toussainttimes = np.empty(nb_iter, dtype=object)
@@ -36,18 +46,13 @@ def main():
     hulltimes = np.empty(nb_iter, dtype=object)
 
     for index in range(0, nb_iter):
-        filename = "samples/test-{0}.points".format(index)
-        (hull, hulltime, rectangle, rectangletime, circle, circletime) = runpipeline(filename)
-        toussaintresults[index] = point(index, computequality(rectangle, hull))
-        ritterresults[index] = point(index, computequality(circle, hull))
-        toussainttimes[index] = point(index, rectangletime)
-        rittertimes[index] = point(index, circletime * (10 ** 4))
-        hulltimes[index] = point(index, hulltime * (10 ** 4))
-
-
-    fig = plt.figure()
-    efficacity = fig.add_subplot(2, 1, 1)
-    time = fig.add_subplot(2, 1, 2)
+        (pointsnumber, hull, hulltime, rectangle, rectangletime, circle, circletime) = runpipeline(index)
+        print(pointsnumber, computequality(rectangle, hull), computequality(circle, hull), computequality(circle, hull))
+        toussaintresults[index] = point(pointsnumber, computequality(rectangle, hull))
+        ritterresults[index] = point(pointsnumber, computequality(circle, hull))
+        toussainttimes[index] = point(pointsnumber, rectangletime)
+        rittertimes[index] = point(pointsnumber, circletime * (10 ** 4))
+        hulltimes[index] = point(pointsnumber, hulltime * (10 ** 4))
 
     datasets = (Dataset(toussaintresults), Dataset(ritterresults), Dataset(toussainttimes), Dataset(rittertimes), Dataset(hulltimes))
     colors = ("red", "blue", "red", "blue", "black")

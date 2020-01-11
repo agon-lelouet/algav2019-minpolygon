@@ -72,9 +72,12 @@ class Shape:
             self.vectors[index] = vector(currentpoint, point(nextPoint.getX() - currentpoint.getX(), nextPoint.getY() - currentpoint.getY()))
     
     def area(self) -> float:
-        points = [ point.coordArray for point in self.points ]
-        lines = np.hstack([points, np.roll(points, -1, axis=0)])
-        return 0.5*abs(sum(x1*y2-x2*y1 for x1, y1, x2, y2 in lines))
+        area = 0.0
+        for i in range(0, len(self.points)):
+            j = (i+1)%len(self.points)
+            area+=(self.points[i].getX() * self.points[j].getY())
+            area-=(self.points[i].getY() * self.points[j].getX())
+        return 0.5*abs(area)
 
 
     def draw(self, ax, color, label):
@@ -89,19 +92,10 @@ class Circle:
     def __init__(self, centerX: float, centerY: float, radius: float):
         self.centerX = centerX
         self.centerY = centerY
-        self.radius = radius      
-
-    def __init__(self, linearg: str):
-        x, y, radius = tuple(linearg.split(" "))
-        self.centerX = float(x)
-        self.centerY = float(y)
-        self.radius = float(radius)
-
+        self.radius = radius
     
     def area(self):
-        twopi = 2.0 * np.pi
-        rsquare = np.square(self.radius)
-        return twopi * rsquare
+        return 2.0 * np.pi * np.square(self.radius)
 
 def angleBetweenVectors(u: vector, v: vector) -> float:
     """
