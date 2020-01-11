@@ -5,11 +5,11 @@ Implementation of the AKL-Toussaint and Ritter algorithm (minimum polygons) for 
 # HOW TO
 
 For a first run on a Linux system : 
-- ensure you have python3 installed
+- ensure you have python3 and python3-tk (tkinter, to show the matplotlib graph) installed
 - run the initialize.sh file
-- And then `python3 src/main.py` to run the project.
+- And then `make` and `python3 src/main.py` to run the project.
 
-# Preparations
+# How to run the C utilities as separate programs : 
 
 The utilities assume a POSIX-compliant system.
 
@@ -63,9 +63,3 @@ You will need of course the following unix commands :
 - wc
 
 All these commands are supposed to be installed on a POSIX system.
-
-# TODO
-
-- Add ritter to the pipeline (merge branch and call the c program from python)
-- Cleanup the code for toussaint
-- statistical analysis (should be easy to do, with datasets of varying sizes)
