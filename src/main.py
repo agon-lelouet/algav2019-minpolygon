@@ -1,4 +1,4 @@
-from Data import Dataset, download, getrandomfile
+from Data import Dataset, download, getrandomfile, NB_FILES
 from Geometry import Shape, point
 from Algorithms import AggregateFiles, GrahamAlgorithm, TriPixelAlgorithm, ToussaintAlgorithm, RitterAlgorithm, CONCATFILE
 from os import walk, path
@@ -7,10 +7,11 @@ import matplotlib.pyplot as plt
 from random import randint
 
 def runpipeline(index: int) -> tuple:
+    filename = "samples/test-{0}.points".format(index)
 
-    AggregateFiles((index+1))
+    #AggregateFiles((index+1))
 
-    (tripixelSet, tripixeltime) = TriPixelAlgorithm(CONCATFILE)
+    (tripixelSet, tripixeltime) = TriPixelAlgorithm(filename)
 
     (convexhull, hulltime) = GrahamAlgorithm()
 
@@ -27,7 +28,7 @@ def getrandomnumber(max: int):
     return randint(1, max)
 
 def main():
-    nb_iter = getrandomnumber(15)
+    nb_iter = NB_FILES
     download()
 
     samplesdir = "samples/"
@@ -40,12 +41,13 @@ def main():
     plot1 = fig.add_subplot(2,2,3)
     plot1.set_aspect("equal")
     toplot = randint(0, nb_iter)
-    print(toplot)
+
     toussaintresults = np.empty(nb_iter, dtype=object)
     ritterresults = np.empty(nb_iter, dtype=object) 
     toussainttimes = np.empty(nb_iter, dtype=object)
     rittertimes = np.empty(nb_iter, dtype=object)
     for index in range(0, nb_iter):
+        print(index)
         (tripixelSet, tripixeltime, hull, hulltime, rectangle, rectangletime, circle, circletime) = runpipeline(index)
 
         rectanglearea = rectangle.area()
