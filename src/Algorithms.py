@@ -83,13 +83,13 @@ def ToussaintAlgorithm(convexHull: geo.Shape) -> geo.Shape:
         if (vector.origin.getX() < convexHull.vectors[iindex].origin.getX()):
             iindex = i
 
-        if (vector.origin.getY() < convexHull.vectors[jindex].origin.getY()):
+        if (vector.origin.getY() < convexHull.vectors[lindex].origin.getY()):
             lindex = i
         
         if (vector.origin.getX() > convexHull.vectors[kindex].origin.getX()):
             kindex = i
         
-        if (vector.origin.getY() > convexHull.vectors[lindex].origin.getY()):
+        if (vector.origin.getY() > convexHull.vectors[jindex].origin.getY()):
             jindex = i
 
     iindex0 = iindex
@@ -114,7 +114,7 @@ def ToussaintAlgorithm(convexHull: geo.Shape) -> geo.Shape:
     areamin = float("inf")
 
     convexhulllen = len(convexHull.vectors)
-
+    i = 0
     while not hullscanned:
 
         indexanglemin = 0
@@ -124,57 +124,58 @@ def ToussaintAlgorithm(convexHull: geo.Shape) -> geo.Shape:
         anglej = geo.angleBetweenVectors(support_j, convexHull.vectors[jindex])
 
         if(anglei < anglej):
-            anglemin = -anglei
+            anglemin = anglei
             indexanglemin = iindex
         else:
-            anglemin = -anglej
+            anglemin = anglej
             indexanglemin = jindex
 
         anglek = geo.angleBetweenVectors(support_k, convexHull.vectors[kindex])
         if(anglek < anglemin):
-            anglemin = -anglek
+            anglemin = anglek
             indexanglemin = kindex
 
         anglel = geo.angleBetweenVectors(support_l, convexHull.vectors[lindex])
         if(anglel < anglemin):
-            anglemin = -anglel
+            anglemin = anglel
             indexanglemin = lindex
     
 
         if indexanglemin == iindex:
-            support_i = geo.vector(convexHull.vectors[iindex].origin, convexHull.vectors[iindex].direction)
-            support_j = geo.vector(support_j.origin, support_i.normal().invert().direction)
-            support_k = geo.vector(support_k.origin, support_i.invert().direction)
-            support_l = geo.vector(support_l.origin, support_j.invert().direction)
+            support_i = geo.vector(support_i.origin, convexHull.vectors[iindex].direction)
+            support_j = geo.vector(convexHull.points[jindex], support_i.normal().invert().direction)
+            support_k = geo.vector(convexHull.points[kindex], support_i.invert().direction)
+            support_l = geo.vector(convexHull.points[lindex], support_j.invert().direction)
 
             iindex = (iindex+1)%convexhulllen
             support_i.origin = convexHull.points[iindex]
             iStepped = True
 
         elif indexanglemin == jindex:
-            support_j = geo.vector(convexHull.vectors[jindex].origin, convexHull.vectors[jindex].direction)
-            support_k = geo.vector(support_k.origin, support_j.normal().invert().direction)
-            support_l = geo.vector(support_l.origin, support_j.invert().direction)
-            support_i = geo.vector(support_i.origin, support_k.invert().direction)
+            support_j = geo.vector(support_j.origin, convexHull.vectors[jindex].direction)
+            support_k = geo.vector(convexHull.points[kindex], support_j.normal().invert().direction)
+            support_l = geo.vector(convexHull.points[lindex], support_j.invert().direction)
+            support_i = geo.vector(convexHull.points[iindex], support_k.invert().direction)
 
             jindex = (jindex+1)%convexhulllen
             support_j.origin = convexHull.points[jindex]
             jStepped = True
 
         elif indexanglemin == kindex:
-            support_k = geo.vector(convexHull.vectors[kindex].origin, convexHull.vectors[kindex].direction)
-            support_l = geo.vector(support_l.origin, support_k.normal().invert().direction)
-            support_i = geo.vector(support_i.origin, support_k.invert().direction)
-            support_j = geo.vector(support_j.origin, support_l.invert().direction)
+            support_k = geo.vector(support_k.origin, convexHull.vectors[kindex].direction)
+            support_l = geo.vector(convexHull.points[lindex], support_k.normal().invert().direction)
+            support_i = geo.vector(convexHull.points[iindex], support_k.invert().direction)
+            support_j = geo.vector(convexHull.points[jindex], support_l.invert().direction)
+
             kindex = (kindex+1)%convexhulllen
             support_k.origin = convexHull.points[kindex]
             kStepped = True
 
         else:
-            support_l = geo.vector(convexHull.vectors[lindex].orig, convexHull.vectors[lindex].direction)
-            support_i = geo.vector(support_i.origin, support_l.normal().invert().direction)
-            support_j = geo.vector(support_j.origin, support_l.invert().direction)
-            support_k = geo.vector(support_k.origin, support_i.invert().direction)
+            support_l = geo.vector(support_l.origin, convexHull.vectors[lindex].direction)
+            support_i = geo.vector(convexHull.points[iindex], support_l.normal().invert().direction)
+            support_j = geo.vector(convexHull.points[jindex], support_l.invert().direction)
+            support_k = geo.vector(convexHull.points[kindex], support_i.invert().direction)
 
             lindex = (lindex+1)%convexhulllen
             support_l.origin = convexHull.points[lindex]
@@ -191,8 +192,7 @@ def ToussaintAlgorithm(convexHull: geo.Shape) -> geo.Shape:
             count = count + 1
 
         hullscanned = (count >= 4)
-
+        i = i + 1
     end = time.perf_counter_ns()
-
     total_time = (end - start) / (10 ** 9)
     return (minrectangle, total_time)

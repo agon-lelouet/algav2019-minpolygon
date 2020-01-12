@@ -27,8 +27,7 @@ def getrandomnumber(max: int):
     return randint(1, max)
 
 def main():
-    nb_iter = getrandomnumber(10)
-    print(nb_iter)
+    nb_iter = getrandomnumber(15)
     download()
 
     samplesdir = "samples/"
@@ -38,12 +37,10 @@ def main():
     efficacity = fig.add_subplot(2, 2, 1)
     time = fig.add_subplot(2, 2, 2)
 
-    # plot1 = fig.add_subplot(2,2,3)
-    # plot2 = fig.add_subplot(2,2,4)
-    # toplot = (randint(0, nb_iter), randint(0, nb_iter))
-    # plots = (plot1, plot2)
-    # toplotindex = 0
-
+    plot1 = fig.add_subplot(2,2,3)
+    plot1.set_aspect("equal")
+    toplot = randint(0, nb_iter)
+    print(toplot)
     toussaintresults = np.empty(nb_iter, dtype=object)
     ritterresults = np.empty(nb_iter, dtype=object) 
     toussainttimes = np.empty(nb_iter, dtype=object)
@@ -67,12 +64,11 @@ def main():
         toussainttimes[index] = point(index, toussainttime)
         rittertimes[index] = point(index, rittertime)
 
-        # if index in toplot:
-        #     print("ici")
-        #     hull.draw(plots[toplotindex], "black", "graham")
-        #     rectangle.draw(plots[toplotindex], "red", "toussaint")
-        #     circle.draw(plots[toplotindex], "blue", "ritter")
-        #     toplotindex = toplotindex+1
+        if index == toplot:
+            print("ici")
+            hull.draw(plot1, "black", "graham")
+            rectangle.draw(plot1, "red", "toussaint")
+            circle.draw(plot1, "blue", "ritter")
 
 
     datasets = (Dataset(toussaintresults), Dataset(ritterresults), Dataset(toussainttimes), Dataset(rittertimes))

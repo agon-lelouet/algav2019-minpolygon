@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from math import degrees
 
 class point:
     def __init__(self, xCoord, yCoord):
@@ -112,35 +113,67 @@ def angleBetweenVectors(u: vector, v: vector) -> float:
     dotproduct = np.dot(u.direction.coordArray, v.direction.coordArray)
     return np.arccos(dotproduct / normproduct)
 
-def get_intersect(a1, a2, b1, b2):
-    """ 
-    Returns the point of intersection of the lines passing through a2,a1 and b2,b1.
-    a1: [x, y] a point on the first line
-    a2: [x, y] another point on the first line
-    b1: [x, y] a point on the second line
-    b2: [x, y] another point on the second line
-    """
-    s = np.vstack([a1,a2,b1,b2])
-    h = np.hstack((s, np.ones((4, 1))))
-    l1 = np.cross(h[0], h[1])
-    l2 = np.cross(h[2], h[3])
-    x, y, z = np.cross(l1, l2)
-    if z == 0:
-        return (float('inf'), float('inf'))
-    return (x/z, y/z)
+def get_intersect(aorig, adirect, borig, bdirect):
+    if adirect.getX() == 0:
+        bslope = bdirect.getY() / bdirect.getX()
+        borigy = (borig.getY()) - (bslope * borig.getX())
+        ycoord = (bslope*aorig.getX()) + borigy
+        return (aorig.getX(), ycoord)
+    if adirect.getY() == 0:
+        if bdirect.getX() == 0:
+            return (borig.getX(), aorig.getY())
+        bslope = bdirect.getY() / bdirect.getX()
+        borigy = (borig.getY()) - (bslope * borig.getX())
+        xcoord = (aorig.getY() - borigy) /bslope
+        return (xcoord, aorig.getY())
+
+    if bdirect.getX() == 0:
+        aslope = adirect.getY() / adirect.getX()
+        aorigy = (aorig.getY()) - (aslope * aorig.getX())
+        ycoord = (aslope*borig.getX()) + aorigy
+        return (borig.getX(), ycoord)
+    if bdirect.getY() == 0:
+        if adirect.getX() == 0:
+            return (aorig.getX(), borig.getY())
+        aslope = adirect.getY() / adirect.getX()
+        aorigy = (aorig.getY()) - (aslope * aorig.getX())
+        xcoord = (borig.getY() - aorigy) /aslope
+        return (xcoord, borig.getY())
+
+    aslope = adirect.getY() / adirect.getX()
+    aorigy = (aorig.getY()) - (aslope * aorig.getX())
+
+    bslope = bdirect.getY() / bdirect.getX()
+    borigy = (borig.getY()) - (bslope * borig.getX())
+
+    xcoord = (borigy - aorigy) / (aslope - bslope)
+
+    ycoord = (aslope*xcoord) + aorigy
+
+    return (xcoord, ycoord)
 
 
 def computeshapefromvectors(vectors: np.array) -> Shape:
     vectorslen = len(vectors)
     shape = np.empty(vectorslen, dtype=point)
-    for index, vector in enumerate(vectors):
+    for index, vectorcur in enumerate(vectors):
         nextvec = vectors[(index+1)%vectorslen]
-        a1 = vector.origin.coordArray
-        a2 = [ vector.origin.getX() + vector.direction.getX(), vector.origin.getY() + vector.direction.getY() ]
-        b1 = nextvec.origin.coordArray
-        b2 = [ nextvec.origin.getX() + nextvec.direction.getX(), nextvec.origin.getY() + nextvec.direction.getY() ]
-        x, y = get_intersect(a1, a2, b1, b2)
+        aorig = vectorcur.origin
+        adirect = vectorcur.direction
+        borig = nextvec.origin
+        bdirect = nextvec.direction
+        x, y = get_intersect(aorig, adirect, borig, bdirect)
         shape[index] = point(x, y)
+    
+    for index, pointcur in enumerate(shape):
+        pointnext = shape[(index+1)%4]
+        xdirectNext= pointnext.getX() - pointcur.getX()
+        ydirectNext= pointnext.getY() - pointcur.getY()
+        pointnextnext = shape[(index+2)%4]
+        xdirectNextNext= pointnextnext.getX() - pointnext.getX()
+        ydirectNextNext= pointnextnext.getY() - pointnext.getY()
+        #print("print", degrees(angleBetweenVectors(vector(pointcur, point(xdirectNext, ydirectNext)), vector(pointnext, point(xdirectNextNext, ydirectNextNext)))))
+        # to assert that all angles are 90 deg
     return Shape(shape)
 
 
