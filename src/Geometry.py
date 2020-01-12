@@ -11,50 +11,14 @@ class point:
 
     def getY(self) -> float:
         return self.coordArray[1]
-
-    def setX(self, xCoord):
-        self.coordArray[0] = xCoord
-
-    def setY(self, yCoord):
-        self.coordArray[1] = yCoord
     
     def tofloatstring(self):
         return "{0} {1} \n".format(self.getX(), self.getY())
-
-    def tointstring(self):
-        return "{0} {1} \n".format(int(self.getX()), int(self.getY()))
-    
-    def equals(self, other) -> bool:
-        return self.getX() == other.getX() and self.getY() == other.getY()
 
 class vector:
     def __init__(self, orig: point, direct: point):
         self.origin = orig
         self.direction = direct
-
-    def getNorm(self) -> float:
-        return np.linalg.norm(self.direction.coordArray)
-
-    def normalise(self):
-        """
-        sets the norm of this vector to one
-        """
-        norm = self.getNorm()
-        normedX = self.direction.getX() / norm
-        normedY = self.direction.getY() / norm
-        self.direction.setX(normedX)
-        self.direction.setY(normedY)
-        self.norm = self.getNorm()
-
-    def rotateVector(self, theta: float):
-        """
-        rotates the vector of the specified angle (in radii, still)
-        """
-        coordMatrix = np.reshape(self.direction.coordArray, (2, 1))
-        rotationmatrix = np.array([ [ np.cos(theta), -np.sin(theta) ], [ np.sin(theta), np.cos(theta) ] ], dtype=float)
-        result = np.dot(rotationmatrix, coordMatrix)
-        result = result.flatten()
-        self.direction.coordArray = result
 
     def normal(self):
         return vector(self.origin, point(-self.direction.getY(), self.direction.getX()))
@@ -80,9 +44,6 @@ class Shape:
             area-=(self.points[i].getY() * self.points[j].getX())
         return 0.5*abs(area)
 
-    def areaAsRectangle(self) -> float:
-        return self.vectors[0].getNorm() * self.vectors[1].getNorm()
-
     def draw(self, ax, color, label):
         i = 0
         vectorlistlen = len(self.vectors)
@@ -90,6 +51,7 @@ class Shape:
             originX = vector.origin.getX()
             originY = vector.origin.getY()
             ax.plot([ originX, originX + vector.direction.getX() ], [ originY, originY + vector.direction.getY() ], color=color)
+
 
 class Circle:
     def __init__(self, centerX: float, centerY: float, radius: float):
