@@ -8,6 +8,7 @@ For a first run on a Linux system :
 - ensure you have python3 and python3-tk (tkinter, to show the matplotlib graph) installed
 - run the initialize.sh file
 - And then `make` and `python3 src/main.py` to run the project.
+- If you want to adjust the number of dataset the program is running on, you can do so by editing the nb_files value of the main function in src/main.py
 
 # How to run the C utilities as separate programs : 
 

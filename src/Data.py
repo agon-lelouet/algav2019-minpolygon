@@ -66,11 +66,6 @@ class Dataset:
         plot.scatter(self.getXList(), self.getYList(), alpha=0.8, c=color, edgecolors='none', s=30, label=label)
         if withlines:
             plot.plot(self.getXList(), self.getYList(), color=color, ls="solid")
-            # maxlen = len(self.pointslist)
-            # for index, point in enumerate(self.pointslist):
-            #     plot.plot([point.getX(), self.pointslist[index+1].getX()], [ point.getY(), self.pointslist[index+1].getY() ], color=color, ls="solid")
-            #     if (index == maxlen-2):
-            #         break
 
     def toString(self):
         for point in self.pointslist:

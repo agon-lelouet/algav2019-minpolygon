@@ -1,5 +1,5 @@
 import numpy as np
-import matplotlib as plt
+import matplotlib.pyplot as plt
 
 class point:
     def __init__(self, xCoord, yCoord):
@@ -79,6 +79,8 @@ class Shape:
             area-=(self.points[i].getY() * self.points[j].getX())
         return 0.5*abs(area)
 
+    def areaAsRectangle(self) -> float:
+        return self.vectors[0].getNorm() * self.vectors[1].getNorm()
 
     def draw(self, ax, color, label):
         i = 0
@@ -95,7 +97,12 @@ class Circle:
         self.radius = radius
     
     def area(self):
-        return 2.0 * np.pi * np.square(self.radius)
+        return np.pi * np.square(self.radius)
+
+    def draw(self, ax, color, label):
+        i = 0
+        circle = plt.Circle((self.centerX, self.centerY), self.radius, color=color, fill=False)
+        ax.add_artist(circle)
 
 def angleBetweenVectors(u: vector, v: vector) -> float:
     """

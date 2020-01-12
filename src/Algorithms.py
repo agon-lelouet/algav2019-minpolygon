@@ -181,10 +181,10 @@ def ToussaintAlgorithm(convexHull: geo.Shape) -> geo.Shape:
             lStepped = True
 
         rectangle = geo.computeshapefromvectors([ support_i, support_j, support_k, support_l ])
-
-        if rectangle.area() < areamin:
+        rectanglearea = rectangle.area()
+        if rectanglearea < areamin:
             minrectangle = geo.computeshapefromvectors([ support_i, support_j, support_k, support_l ])
-            minarea = minrectangle.area()
+            minarea = rectanglearea
         
         if (iStepped and iindex == iindex0 or jStepped and jindex == jindex0 or
             kStepped and kindex == kindex0 or lStepped and lindex == lindex0):
