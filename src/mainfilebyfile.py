@@ -1,4 +1,4 @@
-from Data import Dataset, download, getrandomfile, NB_FILES
+zfrom Data import Dataset, download, getrandomfile, NB_FILES
 from Geometry import Shape, point
 from Algorithms import AggregateFiles, GrahamAlgorithm, TriPixelAlgorithm, ToussaintAlgorithm, RitterAlgorithm, CONCATFILE
 from os import walk, path

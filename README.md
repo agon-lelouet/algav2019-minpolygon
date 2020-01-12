@@ -7,7 +7,7 @@ Implementation of the AKL-Toussaint and Ritter algorithm (minimum polygons) for 
 For a first run on a Linux system : 
 - ensure you have python3 and python3-tk (tkinter, to show the matplotlib graph) installed
 - run the initialize.sh file
-- And then `make` and `python3 src/main.py` to run the project.
+- And then `make` and `python3 src/mainbyaggrer.py` or `python3 src/mainfilebyfile.py` to run the project in aggregation mode (we gradually increase the entry size) or file by file mode (we execute the dataset algorithms on each file).
 - If you want to adjust the number of dataset the program is running on, you can do so by editing the nb_files value of the main function in src/main.py
 
 # How to run the C utilities as separate programs : 
